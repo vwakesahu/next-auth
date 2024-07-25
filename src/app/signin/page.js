@@ -1,14 +1,17 @@
 import { getServerSession } from "next-auth";
-import Link from "next/link";
 import { authOptions } from "@/configs/next-auth";
-import User from "@/components/user";
+import { LoginForm } from "@/components/login-form";
+import { redirect } from "next/navigation";
 
-export default async function Home() {
+export default async function SignIn() {
   const session = await getServerSession(authOptions);
-  const user = session?.user;
+  if (session) {
+    return redirect("/");
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {user ? <User user={user} /> : <Link href="/signin">Login </Link>}
+      <LoginForm />
     </main>
   );
 }
