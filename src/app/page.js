@@ -5,6 +5,7 @@ import User from "@/components/user";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
+  // console.log(session)
   const user = session?.user;
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">

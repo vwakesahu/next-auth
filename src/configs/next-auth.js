@@ -5,26 +5,27 @@ export const authOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
-          label: "Username",
+        otp: {
+          label: "OTP",
           type: "text",
-          placeholder: "Enter username",
+          placeholder: "Enter otp",
         },
-        password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
+        console.log(req.body);
+        //verify the OTP
+        // this user will be fetched from the database params from credentials
         const user = {
-          id: "1",
-          name: credentials?.username,
+          _id: "1",
+          name: "vwakesahu",
           email: "admin@example.com",
           username: "admin",
           password: "admin",
+          isVerified: false,
         };
+        const genaratedOTP = "123456";
 
-        if (
-          credentials?.username == user.username &&
-          credentials.password == user.password
-        ) {
+        if (credentials?.otp == genaratedOTP) {
           return user;
         } else {
           return null;
@@ -32,6 +33,26 @@ export const authOptions = {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      // console.log(token);
+      if (user) {
+        token._id = user._id?.toString();
+        token.isVerified = user.isVerified;
+        token.username = user.username;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user._id = token._id;
+        session.user.isVerified = token.isVerified;
+        session.user.username = token.username;
+      }
+      // console.log(session);
+      return session;
+    },
+  },
   session: {
     strategy: "jwt",
   },
